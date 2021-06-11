@@ -36,6 +36,7 @@ import io.cdap.cdap.common.service.RetryStrategy;
 import io.cdap.cdap.common.utils.DirUtils;
 import io.cdap.cdap.internal.app.DefaultPluginConfigurer;
 import io.cdap.cdap.internal.app.runtime.artifact.ArtifactManagerFactory;
+import io.cdap.cdap.internal.app.runtime.artifact.Artifacts;
 import io.cdap.cdap.internal.app.runtime.artifact.PluginFinder;
 import io.cdap.cdap.internal.app.runtime.plugin.MacroParser;
 import io.cdap.cdap.internal.app.runtime.plugin.PluginInstantiator;
@@ -85,9 +86,8 @@ public class DefaultSystemAppTaskContext extends AbstractServiceDiscoverer imple
     this.secureStore = secureStore;
     this.artifactManager = artifactManagerFactory.create(new NamespaceId(artifactNameSpace), retryStrategy);
     this.pluginsDir = createTempFolder();
-    instantiator = new PluginInstantiator(cConf, artifactClassLoader, pluginsDir);
-    protoArtifactId = new io.cdap.cdap.proto.id.ArtifactId(artifactNameSpace, artifactId.getName(),
-                                                           artifactId.getVersion().getVersion());
+    this.instantiator = new PluginInstantiator(cConf, artifactClassLoader, pluginsDir);
+    this.protoArtifactId = Artifacts.toProtoArtifactId(new NamespaceId(artifactNameSpace), artifactId);
   }
 
   private File createTempFolder() {
@@ -101,9 +101,10 @@ public class DefaultSystemAppTaskContext extends AbstractServiceDiscoverer imple
   }
 
   @Override
-  public Map<String, String> getPreferencesForNamespace(String namespace, boolean resolved) throws IOException {
+  public Map<String, String> getPreferencesForNamespace(String namespace, boolean resolved) throws Exception {
     try {
-      return preferencesFetcher.get(new NamespaceId(namespace), resolved).getProperties();
+      return Retries.callWithRetries(() -> preferencesFetcher.get(new NamespaceId(namespace), resolved).getProperties(),
+                                     retryStrategy);
     } catch (NotFoundException nfe) {
       throw new IllegalArgumentException(String.format("Namespace '%s' does not exist", namespace), nfe);
     }

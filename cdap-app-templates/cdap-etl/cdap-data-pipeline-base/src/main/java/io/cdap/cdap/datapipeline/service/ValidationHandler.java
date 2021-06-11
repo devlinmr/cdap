@@ -94,7 +94,7 @@ public class ValidationHandler extends AbstractSystemHttpServiceHandler {
     }
 
     //Validate remotely if remote execution is enabled
-    if (getContext().remoteExecutionEnabled()) {
+    if (getContext().isRemoteTaskEnabled()) {
       validateRemotely(request, responder, namespace);
       return;
     }
@@ -112,7 +112,7 @@ public class ValidationHandler extends AbstractSystemHttpServiceHandler {
       byte[] bytes = getContext().runTask(runnableTaskRequest);
       responder.sendString(Bytes.toString(bytes));
     } catch (RemoteExecutionException e) {
-      RemoteTaskException remoteTaskException = e.getRemoteTaskException();
+      RemoteTaskException remoteTaskException = e.getCause();
       responder.sendError(
         getExceptionCode(remoteTaskException.getRemoteExceptionClassName(), remoteTaskException.getMessage(),
                          namespace), remoteTaskException.getMessage());

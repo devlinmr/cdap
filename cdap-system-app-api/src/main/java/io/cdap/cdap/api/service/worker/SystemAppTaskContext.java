@@ -41,7 +41,7 @@ public interface SystemAppTaskContext extends ServiceDiscoverer, SecureStore, Au
    * @throws IOException if the preferences for the supplied namespace could not be fetched.
    * @throws IllegalArgumentException if the namespace doesn't exist.
    */
-  Map<String, String> getPreferencesForNamespace(String namespace, boolean resolved) throws IOException;
+  Map<String, String> getPreferencesForNamespace(String namespace, boolean resolved) throws Exception;
 
   /**
    * Create a {@link PluginConfigurer} that can be used to instantiate plugins at runtime.

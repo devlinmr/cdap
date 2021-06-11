@@ -30,7 +30,7 @@ public class RemoteExecutionException extends Exception {
     this.cause = cause;
   }
 
-  public RemoteTaskException getRemoteTaskException() {
+  public RemoteTaskException getCause() {
     return cause;
   }
 }

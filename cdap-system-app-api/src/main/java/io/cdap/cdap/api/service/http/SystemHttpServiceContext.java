@@ -96,5 +96,5 @@ public interface SystemHttpServiceContext extends HttpServiceContext, Transactio
    * Returns boolean indicating whether remote task execution is enabled
    * @return
    */
-  boolean remoteExecutionEnabled();
+  boolean isRemoteTaskEnabled();
 }
