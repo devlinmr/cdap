@@ -16,28 +16,22 @@
 
 package io.cdap.cdap.gateway.handlers;
 
-import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.cdap.cdap.common.NotFoundException;
 import io.cdap.cdap.common.conf.Constants;
+import io.cdap.cdap.common.http.LocationBodyProducer;
 import io.cdap.cdap.common.io.Locations;
-import io.cdap.cdap.master.spi.environment.MasterEnvironmentRunnableContext;
 import io.cdap.http.AbstractHttpHandler;
-import io.cdap.http.BodyProducer;
 import io.cdap.http.HttpHandler;
 import io.cdap.http.HttpResponder;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.twill.filesystem.Location;
 import org.apache.twill.filesystem.LocationFactory;
-import org.mortbay.log.Log;
 
-import java.io.InputStream;
-import javax.annotation.Nullable;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.HttpHeaders;
@@ -71,38 +65,9 @@ public class FileFetcherHttpHandlerInternal extends AbstractHttpHandler {
     Location location = Locations.getLocationFromAbsolutePath(locationFactory, path);
 
     if (!location.exists()) {
-      responder.sendString(HttpResponseStatus.NOT_FOUND, String.format("Path %s not found", path));
-      return;
+      throw new NotFoundException(String.format("Path %s not found", path));
     }
-
-    byte[] buf = new byte[64 * 1024];
-    InputStream inputStream = location.getInputStream();
-    try {
-      responder.sendContent(HttpResponseStatus.OK, new BodyProducer() {
-        @Override
-        public ByteBuf nextChunk() throws Exception {
-          int len = inputStream.read(buf);
-          if (len == -1) {
-            return Unpooled.EMPTY_BUFFER;
-          }
-          return Unpooled.copiedBuffer(buf, 0, len);
-        }
-
-        @Override
-        public void finished() throws Exception {
-          Closeables.closeQuietly(inputStream);
-        }
-
-        @Override
-        public void handleError(@Nullable Throwable cause) {
-          Log.debug("Error when sending chunks for path {}", path, cause);
-          Closeables.closeQuietly(inputStream);
-        }
-      }, new DefaultHttpHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM));
-    } catch (Exception e) {
-      Log.warn("Exception when initiating stream download for path {}", path);
-      Closeables.closeQuietly(inputStream);
-      throw e;
-    }
+    responder.sendContent(HttpResponseStatus.OK, new LocationBodyProducer(location),
+                          new DefaultHttpHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM));
   }
 }

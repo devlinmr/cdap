@@ -19,6 +19,7 @@ package io.cdap.cdap.internal.app.services.http.handlers;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import io.cdap.cdap.common.HttpExceptionHandler;
 import io.cdap.cdap.common.http.DefaultHttpRequestConfig;
 import io.cdap.cdap.gateway.handlers.FileFetcherHttpHandlerInternal;
 import io.cdap.common.http.HttpContentConsumer;
@@ -76,6 +77,7 @@ public class FileFetcherHttpHandlerInternalTest {
 
     httpService = NettyHttpService.builder("FileFetcherHttpHandlerInternalTest")
       .setHttpHandlers(handler)
+      .setExceptionHandler(new HttpExceptionHandler())
       .build();
 
     httpService.start();
