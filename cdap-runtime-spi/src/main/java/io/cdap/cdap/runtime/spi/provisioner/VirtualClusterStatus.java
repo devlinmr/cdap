@@ -17,14 +17,11 @@
 package io.cdap.cdap.runtime.spi.provisioner;
 
 /**
- * Status for clusters.
+ * Status for virtual clusters.
  */
-public enum ClusterStatus {
+public enum VirtualClusterStatus {
   ARRESTED,
-  CREATING,
   RUNNING,
-  FAILED,
-  DELETING,
   TERMINATING,
   TERMINATED,
   NOT_EXISTS,
