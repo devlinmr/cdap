@@ -36,6 +36,26 @@
       "properties": [
         {
           "widget-type": "select",
+          "label": "EMR Version",
+          "name": "emrInstanceVersion",
+          "description": "",
+          "widget-attributes": {
+            "values": [
+              "emr-6.3.0",
+              "emr-6.2.0",
+              "emr-6.1.0",
+              "emr-6.0.0",
+              "emr-5.33.0",
+              "emr-5.29.0",
+              "emr-5.20.0",
+              "emr-5.10.0"
+            ],
+            "size": "medium",
+            "default": "emr-6.2.0"
+          }
+        },
+        {
+          "widget-type": "select",
           "label": "Region",
           "name": "region",
           "description": "When you launch an Amazon EMR cluster, you must specify a region. You might choose a region to reduce latency, minimize costs, or address regulatory requirements. For more information, refer to https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-plan-region.html.",
@@ -119,8 +139,8 @@
           "widget-attributes": {
             "values": [
               "m3.xlarge",
-
               "m3.2xlarge",
+
               "m4.large",
               "m4.xlarge",
               "m4.2xlarge",
@@ -163,8 +183,8 @@
           "widget-attributes": {
             "values": [
               "m3.xlarge",
-
               "m3.2xlarge",
+
               "m4.large",
               "m4.xlarge",
               "m4.2xlarge",
