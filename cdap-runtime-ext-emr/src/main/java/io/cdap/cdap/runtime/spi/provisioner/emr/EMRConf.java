@@ -42,13 +42,14 @@ public class EMRConf {
   private final String logURI;
   private final String masterInstanceType;
   private final String workerInstanceType;
+  private final String emrInstanceVersion;
   private final int instanceCount;
 
   private final SSHPublicKey publicKey;
 
   private EMRConf(String accessKey, String secretKey, String region, String ec2SubnetId,
                   String additionalMasterSecurityGroup, String serviceRole, String jobFlowRole,
-                  String masterInstanceType, String workerInstanceType, int instanceCount,
+                  String masterInstanceType, String workerInstanceType, String emrInstanceVersion, int instanceCount,
                   @Nullable String logURI, @Nullable SSHPublicKey publicKey) {
     this.accessKey = accessKey;
     this.secretKey = secretKey;
@@ -60,6 +61,7 @@ public class EMRConf {
     this.logURI = logURI;
     this.masterInstanceType = masterInstanceType;
     this.workerInstanceType = workerInstanceType;
+    this.emrInstanceVersion = emrInstanceVersion;
     this.instanceCount = instanceCount;
     this.publicKey = publicKey;
   }
@@ -94,6 +96,10 @@ public class EMRConf {
 
   String getWorkerInstanceType() {
     return workerInstanceType;
+  }
+
+  String getEmrInstanceVersion() {
+    return emrInstanceVersion;
   }
 
   @Nullable
@@ -137,12 +143,13 @@ public class EMRConf {
 
     String masterInstanceType = getString(properties, "masterInstanceType", "m1.medium");
     String workerInstanceType = getString(properties, "workerInstanceType", "m1.medium");
+    String emrInstanceVersion = getString(properties, "emrInstanceVersion", "emr-6.3.0");
     int instanceCount = getInt(properties, "instanceCount", 3);
 
     return new EMRConf(accessKey, secretKey, region, ec2SubnetId,
                        additionalMasterSecurityGroup, serviceRole, jobFlowRole,
-                       masterInstanceType, workerInstanceType, instanceCount,
-                       logURI, publicKey);
+                       masterInstanceType, workerInstanceType, emrInstanceVersion,
+                       instanceCount, logURI, publicKey);
   }
 
   private static String getString(Map<String, String> properties, String key) {

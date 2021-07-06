@@ -93,7 +93,7 @@ public class EMRClient implements AutoCloseable {
         .withClassification("yarn-site")
         .withProperties(Collections.singletonMap("yarn.nodemanager.aux-services", "mapreduce_shuffle,spark_shuffle")))
       // all 4.9.x is java 7... which we don't support, so EMR 5.0.0 is our minimum
-      .withReleaseLabel("emr-5.0.0")
+      .withReleaseLabel(emrConf.getEmrInstanceVersion())
       .withServiceRole(emrConf.getServiceRole())
       .withJobFlowRole(emrConf.getJobFlowRole())
       .withInstances(new JobFlowInstancesConfig()
