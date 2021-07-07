@@ -86,9 +86,12 @@ public class EMRClient implements AutoCloseable {
     // name the keypair the same thing as the cluster name
     ec2.importKeyPair(new ImportKeyPairRequest(name, emrConf.getPublicKey().getKey()));
 
+    Application spark = new Application().withName("Spark");
+    Application zeppelin = new Application().withName("Zeppelin");
+
     RunJobFlowRequest request = new RunJobFlowRequest()
       .withName(name)
-      .withApplications(new Application().withName("Spark"))
+      .withApplications(spark, zeppelin)
       .withConfigurations(new Configuration()
         .withClassification("yarn-site")
         .withProperties(Collections.singletonMap("yarn.nodemanager.aux-services", "mapreduce_shuffle,spark_shuffle")))
