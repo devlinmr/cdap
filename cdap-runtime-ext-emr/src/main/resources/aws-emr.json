@@ -83,7 +83,7 @@
               "us-gov-west-1"
             ],
             "size": "medium",
-            "default": "us-west-2"
+            "default": "eu-west-2"
           }
         },
         {
