@@ -15,5 +15,5 @@
 
 [submodule "cdap-ui"]
   path = cdap-ui
-	url = ../cdap-ui.git
+  url = ../cdap-ui
   branch = release/6.5
